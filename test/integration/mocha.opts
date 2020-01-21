@@ -1,0 +1,4 @@
+test/integration/helpers.js
+--reporter spec
+--require @babel/register
+--slow 5000
