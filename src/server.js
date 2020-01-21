@@ -1,11 +1,30 @@
-import express from 'express'
-import bodyParser from 'body-parser'
+import setupApp from './app'
+const port = 3000
 
-const app = express()
-app.use(bodyParser.json())
+(async() => {
+    try {
+        const app = await setupApp()
+        const server = app.listen(port, () => {
+            console.info(`app running on port ${port}`)
+        })
 
-app.get('/', (req, res) => res.send("Hello World!"))
-
-app.listen(3000, () => {
-    console.log("using port 3000")
-})
+        const exitSignals = ["SIGINT", "SIGTERM", "SIGQUIT"]
+        exitSignals.map(sig =>
+            process.on(sig, () =>
+                server.close(err => {
+                    if(err) {
+                        console.error(err)
+                        process.exit(1)
+                    }
+                    app.database.connection.close(function() {
+                        console.info("Database connection closed!")
+                        process.exit(0)
+                    })
+                })
+            )
+        )
+    } catch (error) {
+        console.error(error)
+        process.exit(1)
+    }
+})()
