@@ -1,7 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import routes from './routes'
-import database from './config/database'
+import database from './database'
 
 const app = express()
 
@@ -13,7 +13,7 @@ const configureExpress = () => {
     return app
 }
 
-export default async() => {
+export default async () => {
     const app = configureExpress()
     await app.database.connect()
 
